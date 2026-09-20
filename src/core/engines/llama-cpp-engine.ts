@@ -14,7 +14,10 @@ export class LlamaCppEngine extends BaseEngine {
   async load(modelPath: string): Promise<void> {
     this.logger.info(`Loading model via llama-cpp: ${modelPath}`);
     try {
-      const mod = (await import('llama-cpp')) as any;
+      // Keep llama-cpp optional. Using a runtime module name prevents the
+      // TypeScript build from requiring its native package when Ollama is used.
+      const moduleName = 'llama-cpp';
+      const mod = (await import(moduleName)) as any;
       const AutoModel = mod.AutoModel ?? mod.default?.AutoModel;
       const ctx = await AutoModel.loadFromFile(modelPath, {
         modelType: 'chat',

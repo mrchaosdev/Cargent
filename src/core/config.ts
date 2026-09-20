@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 export interface AgentConfig {
   model: {
     path: string;
@@ -44,4 +46,39 @@ export const DEFAULT_CONFIG: AgentConfig = {
   logLevel: 'info',
 };
 
-export const config: AgentConfig = { ...DEFAULT_CONFIG };
+function envNumber(name: string, fallback: number): number {
+  const value = Number(process.env[name]);
+  return Number.isFinite(value) ? value : fallback;
+}
+
+function envBoolean(name: string, fallback: boolean): boolean {
+  const value = process.env[name]?.toLowerCase();
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  return fallback;
+}
+
+const envBackend = process.env.LLM_BACKEND;
+const envLogLevel = process.env.LOG_LEVEL;
+
+export const config: AgentConfig = {
+  model: {
+    path: process.env.MODEL_PATH || DEFAULT_CONFIG.model.path,
+    contextSize: envNumber('CONTEXT_SIZE', DEFAULT_CONFIG.model.contextSize),
+    gpuLayers: envNumber('GPU_LAYERS', DEFAULT_CONFIG.model.gpuLayers),
+    temperature: envNumber('TEMPERATURE', DEFAULT_CONFIG.model.temperature),
+    maxTokens: envNumber('MAX_TOKENS', DEFAULT_CONFIG.model.maxTokens),
+  },
+  agent: {
+    maxIterations: envNumber('MAX_ITERATIONS', DEFAULT_CONFIG.agent.maxIterations),
+    memoryLimit: envNumber('MEMORY_LIMIT', DEFAULT_CONFIG.agent.memoryLimit),
+    enableLearning: envBoolean('ENABLE_LEARNING', DEFAULT_CONFIG.agent.enableLearning),
+  },
+  vectorStore: { ...DEFAULT_CONFIG.vectorStore },
+  llmBackend: envBackend === 'llama-cpp' ? 'llama-cpp' : DEFAULT_CONFIG.llmBackend,
+  ollamaUrl: process.env.OLLAMA_URL || DEFAULT_CONFIG.ollamaUrl,
+  logLevel:
+    envLogLevel === 'debug' || envLogLevel === 'warn' || envLogLevel === 'error'
+      ? envLogLevel
+      : DEFAULT_CONFIG.logLevel,
+};

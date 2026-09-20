@@ -126,7 +126,7 @@ async function main(): Promise<void> {
     res.end(JSON.stringify({ error: "Not found" }));
   });
 
-  server.listen(PORT, () => {
+  server.listen(PORT, "0.0.0.0", () => {
     logger.info(`Cagent HTTP server listening on port ${PORT}`);
     logger.info(`Health: http://localhost:${PORT}/health`);
   });
