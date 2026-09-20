@@ -1,0 +1,11 @@
+export { Agent, AgentResponse } from './agent/index.js';
+export { EngineFactory } from './core/engine-factory.js';
+export { EngineManager } from './core/engine-manager.js';
+export { LearningSystem, KnowledgeBase, VectorStore, Embedder } from './learning/index.js';
+export { CrossProjectManager } from './cross-project/index.js';
+export { ToolRegistry } from './agent/registry.js';
+export { AgentPlanner } from './agent/planner.js';
+export { AgentMemory } from './agent/memory.js';
+export { AgentConfig, DEFAULT_CONFIG } from './core/config.js';
+export { ConfigManager } from './core/config-manager.js';
+export { ContextManager } from './core/context.js';
